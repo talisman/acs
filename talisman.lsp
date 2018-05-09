@@ -51,11 +51,13 @@
 
 )
 ;-----------------------------------------------------
+
+;-----------------------------------------------------
 (defun c:e1467 ()
   (setvar "texteval" 1)
   (setq fldr  "c:\\7777\\ProjectsWork_Revit2017\\1467\\")
   (setq clines '())
-  (setq lines (ssget) i 0 )
+  (setq lines (ssget "x" (list (cons 0 "LINE")(cons 8 "HD")))  i 0 )
   (while
     (< i (sslength lines))
       (setq clines
@@ -69,20 +71,39 @@
               i (1+ i)
             )
   )
-  (setq csvfile (open (strcat folder "reflines.csv") "w"))
+  (setq csvfile (open (strcat fldr "reflines.csv") "w"))
+  (setq csvfile2 (open (strcat fldr "ptss.csv") "w"))
   (foreach line clines
-    (write-line (strcat
+    (progn
+      (write-line (strcat
                     (rtos (nth 0 (car line)) 2 8 ) ","
                     (rtos (nth 1 (car line)) 2 8 ) ","
                     (rtos (nth 2 (car line)) 2 8 ) ","
                     (rtos (nth 0 (cadr line)) 2 8 ) ","
                     (rtos (nth 1 (cadr line)) 2 8 ) ","
-                    (rtos (nth 2 (cadr line)) 2 8 ) 
+                    (rtos (nth 2 (cadr line)) 2 8 )
 
-      ) csvfile)
-  )
+                    ) csvfile)
+      (write-line
+        (strcat
+            (rtos (nth 0 (car line)) 2 8 ) ","
+            (rtos (nth 1 (car line)) 2 8 ) ","
+            (rtos (nth 2 (car line)) 2 8 )
+              )
+
+        csvfile2 )
+        (write-line
+          (strcat
+              (rtos (nth 0 (cadr line)) 2 8 ) ","
+              (rtos (nth 1 (cadr line)) 2 8 ) ","
+              (rtos (nth 2 (cadr line)) 2 8 )
+                )
+
+          csvfile2 )
+        )
+      )
   (close csvfile)
-
+  (close csvfile2)
 )
 ;-----------------------------------------------------
 (defun c:m1467 ( / fldr exlevels x z count)
