@@ -1,0 +1,5 @@
+(repeat 10 (command "-purge" "a" "*" "n"))
+(repeat 10 (command "-purge" "r" "*" "n"))
+.qsave
+.quit
+y
