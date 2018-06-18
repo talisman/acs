@@ -12,7 +12,7 @@
     (command "wblock" (strcat fldr "/" x ".dwg") "=")
     )
 )
-
+;-----------------------------------------------------
 (defun c:qb (/ fldr exlevels nextlevel nfile bpt elements)
   (setq fldr  "c:\\7777\\ProjectsWork_Revit2017\\1467\\")
   (setvar "filedia" 0)

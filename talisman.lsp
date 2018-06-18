@@ -62,15 +62,18 @@
   (setq blkFolder (strcat (getvar "DWGPREFIX")  (vl-filename-base (getvar "dwgname")) "-blocks"))
   (vl-mkdir blkfolder)
   (setq blks (vla-get-blocks _doc) blocknames '())
-
   (vlax-for i blks
       (if (= :vlax-false (vla-get-isxref i))
           (setq blocknames (cons (vla-get-name i) blocknames)))
           )
-
   (setq blocknames (vl-remove-if-not '(lambda (x) (snvalid x)) blocknames))
   (foreach x blocknames (command "-wblock" (strcat blkfolder "/" x ".dwg") "="))
 )
+;-----------------------------------------------------
+;(defun-q c:upblk ()
+;  (setq blkFolder (strcat (getvar "DWGPREFIX")  (vl-filename-base (getvar "dwgname")) "-blocks"))
+;  (setq blks (vl-directory-files blkfolder "*.dwg" 1))
+;)
 ;-----------------------------------------------------
 (defun c:bqa ( / pline astr blk )
   (setq pline (e->obj  (car(entsel "\nSelect Polyline"))))
