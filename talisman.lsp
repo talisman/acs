@@ -3,6 +3,13 @@
 (setq _doc (vla-get-activedocument _acad))
 (defun obDt (object)(vlax-dump-object  object t))
 ;-----------------------------------------------------
+converts radians to degrees
+(defun rtod (r) (* 180.0 (/ r pi)))
+
+; converts degrees to radians
+(defun dtor (d) (* pi (/ d 180.0)))
+
+;-----------------------------------------------------
 (defun _dxf(ent code)(cdr(assoc code (entget ent))))
 ;-----------------------------------------------------
 (defun e->obj (e / eo)
@@ -29,6 +36,15 @@
       )
     )
     objs
+)
+;-----------------------------------------------------
+(defun c:gg ()
+  (if (= (getvar "PICKSTYLE") 0)
+    (setvar "PICKSTYLE" 1 )
+    (if (= (getvar "PICKSTYLE") 1)
+      (setvar "PICKSTYLE" 0 )
+      )
+    )
 )
 ;-----------------------------------------------------
 (defun c:L* ()
@@ -114,15 +130,39 @@
 )
 ;-----------------------------------------------------
 ; Get attribute value
+; (defun-q att-get-value (blockent tag  / att-obj-list value)
+; 	(setq att-obj-list  (vlax-safearray->list (vlax-variant-value (vla-getattributes (e->obj blockent)))))
+; 		(foreach n att-obj-list
+; 				(if (= tag (vlax-get-property n "TagString"))
+; 						(setq value (vlax-get-property n "TextString" ))
+; 						)
+; 				)
+;         value
+; )
+;-----------------------------------------------------
 (defun-q att-get-value (blockent tag  / att-obj-list value)
+  (setq value (cadr (assoc tag (att-get-all blockent))))
+  value
+  )
+
+
+;-----------------------------------------------------
+(defun-q att-get-all (blockent  / att-obj-list value)
 	(setq att-obj-list  (vlax-safearray->list (vlax-variant-value (vla-getattributes (e->obj blockent)))))
-		(foreach n att-obj-list
-				(if (= tag (vlax-get-property n "TagString"))
-						(setq value (vlax-get-property n "TextString" ))
-						)
-				)
-        value
+  (setq resultlist '())
+	(foreach n att-obj-list
+    (setq resultlist (cons  (list (vlax-get-property n "TagString") (vlax-get-property n "TextString" )) resultlist))
+	)
+  (setq resultlist (reverse resultlist))
+  resultlist
 )
+;-----------------------------------------------------
+(defun att-feed ( from_block to_block att_map  / x )
+  (foreach x att_map
+    (att-set-value to_block (cadr x) (att-get-value from_block (car x)))
+    )
+)
+
 ;-----------------------------------------------------
 ; Rooms polylines , areas and tags
           (defun c:room-link ( / )
